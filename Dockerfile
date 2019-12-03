@@ -13,7 +13,7 @@ RUN apt-get update && \
     apt-get clean && \
     pip3 install --upgrade --no-cache \
         prometheus_client \
-        serial
+        pyserial
 
 # USER 3134
 COPY  prometheus_esmr5 /prometheus_esmr5
