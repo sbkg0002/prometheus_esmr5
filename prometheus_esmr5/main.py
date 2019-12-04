@@ -12,9 +12,15 @@ Inspired by:
 
 # Metric configuration
 INTERVAL = 10
-# Create a metric to track time spent and requests made.
-REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
-g = Gauge('my_inprogress_requests', 'Description of gauge')
+
+# Only iterate over the following data types
+filter_list = {'1-0:1.8.1':'p1_total_electricity_used_rate_1',
+            '1-0:1.8.2':'p1_total_electricity_used_rate_2',
+            '1-0:2.8.1':'p1_total_electricity_provided_rate_1',
+            '1-0:2.8.2':'p1_total_electricity_provided_rate_2',
+            '1-0:1.7.0':'p1_total_electricity_used',
+            '1-0:2.7.0':'p1_total_electricity_provided',
+            '0-1:24.2.1(191204215508W)':'p1_total_gas_used'}
 
 # Serial configuration
 ser = serial.Serial()
@@ -37,15 +43,6 @@ def get_p1_statistics():
     # Initialize
     p1_counter=0
     p1_state = {}
-
-    # Only iterate over the following data types
-    filter_list = {'1-0:1.8.1':'p1_total_electricity_used_rate_1',
-                '1-0:1.8.2':'p1_total_electricity_used_rate_2',
-                '1-0:2.8.1':'p1_total_electricity_provided_rate_1',
-                '1-0:2.8.2':'p1_total_electricity_provided_rate_2',
-                '1-0:1.7.0':'p1_total_electricity_used',
-                '1-0:2.7.0':'p1_total_electricity_provided',
-                '0-1:24.2.1(191204215508W)':'p1_total_gas_used'}
 
     while p1_counter < 26:
         p1_line=''
@@ -79,7 +76,7 @@ def get_p1_statistics():
     except:
         sys.exit ("Oops %s. Programma afgebroken." % ser.name )      
 
-    return(p1_state)
+    return p1_state
 '''
 /1-0:1.8.1/ { print "Electra: Totaal verbruik tarief 1 (nacht) KWh: " getfloat($0) }
 /1-0:1.8.2/ { print "Electra: Totaal verbruik tarief 2 (dag) KWh: "   getfloat($0) }
@@ -94,17 +91,23 @@ def get_p1_statistics():
     
 
 
-
-# Decorate function with metric.
-@REQUEST_TIME.time()
 def process_request(t):
     """A dummy function that takes some time."""
-    g.inc()      # Increment by 1
+    g = Gauge('my_inprogress_requests', 'Description of gauge')
     time.sleep(t)
 
 if __name__ == '__main__':
+    # Define gauges
+    # https://github.com/prometheus/client_python#gauge
+    for metric, usage in get_p1_statistics().items():
+        g = Gauge(metric, 'Description of gauge')
+        g.set(usage)
     # Start up the server to expose the metrics.
     start_http_server(8000)
     # Generate some requests.
     while True:
         process_request(INTERVAL)
+
+# for metric, usage in get_p1_statistics().items():
+#     print(metric)
+#     print(usage)
