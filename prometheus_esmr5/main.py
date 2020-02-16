@@ -40,7 +40,7 @@ ser.timeout=20
 ser.port="/dev/ttyUSB0"
 
 # Interval in seconds
-interval = 10
+interval = 30
 
 
 def get_p1_metrics():
@@ -59,19 +59,22 @@ def get_p1_metrics():
         p1_line=str(p1_raw, "utf-8").strip()
 
         if '1-0:1.8.1' in p1_line:
-            # print("p1_total_electricity_used_rate_1: {}" .format(markup_helper(p1_line)))
+            print("p1_total_electricity_used_rate_1: {}" .format(markup_helper(p1_line)))
             p1_total_electricity_used_rate_1.set(markup_helper(p1_line))
         elif '1-0:1.8.2' in p1_line:
-            # print("p1_total_electricity_used_rate_2: {}" .format(markup_helper(p1_line)))
+            print("p1_total_electricity_used_rate_2: {}" .format(markup_helper(p1_line)))
             p1_total_electricity_used_rate_2.set(markup_helper(p1_line))
         elif '1-0:2.8.1' in p1_line:
-            # print("p1_total_electricity_provided_rate_1: {}" .format(markup_helper(p1_line)))
+            print("p1_total_electricity_provided_rate_1: {}" .format(markup_helper(p1_line)))
             p1_total_electricity_provided_rate_1.set(markup_helper(p1_line))
         elif '1-0:1.7.0' in p1_line:
+            print("p1_total_electricity_used: {}" .format(markup_helper(p1_line)))
             p1_total_electricity_used.set(markup_helper(p1_line))
         elif '1-0:2.7.0' in p1_line:
+            print("p1_total_electricity_provided: {}" .format(markup_helper(p1_line)))
             p1_total_electricity_provided.set(markup_helper(p1_line))
         elif '0-1:24.2.1' in p1_line:
+            print("p1_total_gas_used: {}" .format(markup_helper(p1_line)))
             p1_total_gas_used.set(markup_helper(p1_line))
     ser.close()
 
