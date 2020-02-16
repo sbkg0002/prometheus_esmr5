@@ -1,8 +1,9 @@
-from prometheus_client import start_http_server, Summary, Gauge
+from prometheus_client import start_http_server, Gauge
 import time
 import datetime
 import sys
 import serial
+from smeterd.meter import SmartMeter
 
 '''
 Inspired by:
@@ -28,35 +29,27 @@ p1_total_electricity_used = Gauge('p1_total_electricity_used', 'Totaal gebruik e
 p1_total_electricity_provided = Gauge('p1_total_electricity_provided', 'Totaal geleverd elektra')
 p1_total_gas_used = Gauge('p1_total_gas_used', 'Totaal gebruik gas')
 
-# Serial configuration
-ser = serial.Serial()
-ser.baudrate = 115200
-ser.bytesize=serial.EIGHTBITS
-ser.parity=serial.PARITY_NONE
-ser.stopbits=serial.STOPBITS_ONE
-ser.xonxoff=0
-ser.rtscts=0
-ser.timeout=20
-ser.port="/dev/ttyUSB0"
-
 # Interval in seconds
 interval = 30
 
+# Define device
+meter = SmartMeter('/dev/ttyUSB0', baudrate=115200)
 
 def get_p1_metrics():
-    ser_open()
 
-    p1_counter=0
-    while p1_counter < 26:
-        p1_counter = p1_counter +1
-        p1_line=''
-        try:
-            p1_raw = ser.readline()
-        except:
-            sys.exit ("Seriele port %s cannot be read. Exiting." % ser.name )
+    try:
+        p1_lines = meter.read_one_packet()
+    except:
+        sys.exit ("Seriele port %s cannot be read. Exiting." % ser.name )
 
-        # Generate a clean string per line
-        p1_line=str(p1_raw, "utf-8").strip()
+    p1_list = str(p1_lines).splitlines()
+    print(p1_list)
+    print(len(p1_list))
+    for p1_line in p1_lines:
+
+        print(p1_line)
+        # # Generate a clean string per line
+        # p1_line=str(p1_raw, "utf-8").strip()
 
         if '1-0:1.8.1' in p1_line:
             print("p1_total_electricity_used_rate_1: {}" .format(markup_helper(p1_line)))
@@ -76,23 +69,6 @@ def get_p1_metrics():
         elif '0-1:24.2.1' in p1_line:
             print("p1_total_gas_used: {}" .format(markup_helper(p1_line)))
             p1_total_gas_used.set(markup_helper(p1_line))
-    ser.close()
-
-
-
-def ser_open():
-    # Open COM port
-    try:
-        ser.open()
-    except:
-        sys.exit ("Error opening %s."  % ser.name)      
-
-def ser_close():
-    #Close port and show status
-    try:
-        ser.close()
-    except:
-        sys.exit ("Oops %s. Programme aborted." % ser.name )      
 
 def markup_helper(str_line):
     '''
