@@ -20,13 +20,13 @@ filter_list = {'1-0:1.8.1':'p1_total_electricity_used_rate_1',
 '''
 
 # Define metrics
-p1_total_electricity_used_rate_1 = Gauge('p1_total_electricity_used_rate_1', 'bla')
-p1_total_electricity_used_rate_2 = Gauge('p1_total_electricity_used_rate_2', 'bla')
-p1_total_electricity_provided_rate_1 = Gauge('p1_total_electricity_provided_rate_1', 'bla')
-p1_total_electricity_provided_rate_2 = Gauge('p1_total_electricity_provided_rate_2', 'bla')
-p1_total_electricity_used = Gauge('p1_total_electricity_used', 'bla')
-p1_total_electricity_provided = Gauge('p1_total_electricity_provided', 'bla')
-p1_total_gas_used = Gauge('p1_total_gas_used', 'bla')
+p1_total_electricity_used_rate_1 = Gauge('p1_total_electricity_used_rate_1', 'Gebruik elektra dal')
+p1_total_electricity_used_rate_2 = Gauge('p1_total_electricity_used_rate_2', 'Gebruik elektra piek')
+p1_total_electricity_provided_rate_1 = Gauge('p1_total_electricity_provided_rate_1', 'Geleverd elektra dal')
+p1_total_electricity_provided_rate_2 = Gauge('p1_total_electricity_provided_rate_2', 'Geleverd elektra piek')
+p1_total_electricity_used = Gauge('p1_total_electricity_used', 'Totaal gebruik elektra')
+p1_total_electricity_provided = Gauge('p1_total_electricity_provided', 'Totaal geleverd elektra')
+p1_total_gas_used = Gauge('p1_total_gas_used', 'Totaal gebruik gas')
 
 # Serial configuration
 ser = serial.Serial()
@@ -67,7 +67,12 @@ def get_p1_metrics():
         elif '1-0:2.8.1' in p1_line:
             # print("p1_total_electricity_provided_rate_1: {}" .format(markup_helper(p1_line)))
             p1_total_electricity_provided_rate_1.set(markup_helper(p1_line))
-
+        elif '1-0:1.7.0' in p1_line:
+            p1_total_electricity_used.set(markup_helper(p1_line))
+        elif '1-0:2.7.0' in p1_line:
+            p1_total_electricity_provided.set(markup_helper(p1_line))
+        elif '0-1:24.2.1' in p1_line:
+            p1_total_gas_used.set(markup_helper(p1_line))
     ser.close()
 
 
@@ -90,7 +95,7 @@ def markup_helper(str_line):
     '''
     Read raw string and return only the value
     '''
-    return str_line.split('(')[1].split('*')[0]
+    return float(str_line.split('(')[-1].split('*')[0])
 
 
 if __name__ == '__main__':

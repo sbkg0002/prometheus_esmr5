@@ -20,4 +20,4 @@ COPY  prometheus_esmr5 /prometheus_esmr5
 WORKDIR /prometheus_esmr5
 EXPOSE 8000/tcp
 EXPOSE 8000/udp
-CMD ["/usr/local/bin/python3", "/prometheus_esmr5/main.py"]
+CMD ["/usr/local/bin/python3", "-u", "/prometheus_esmr5/main.py"]

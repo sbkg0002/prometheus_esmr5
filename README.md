@@ -5,7 +5,7 @@ Currently for arm32v7 only.
 
 To run in Docker:
 ```
-docker run -d -p 8000:8000 --device=/dev/ttyUSB0 sbkg0002/prometheus_esmr5:arm32v7-latest
+docker run --detach --name prometheus_esmr5 --publish 8000:8000 --device=/dev/ttyUSB0 sbkg0002/prometheus_esmr5:arm32v7-latest
 ```
 
 You can view the metrics at http://localhost:8000/metrics
