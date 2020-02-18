@@ -3,7 +3,9 @@
 
 Currently for arm32v7 only.
 
+## Run the exporter
 To run in Docker:
+
 ```
 docker run \
     --detach \
@@ -12,7 +14,9 @@ docker run \
     --device=/dev/ttyUSB0 \
     sbkg0002/prometheus_esmr5:arm32v7-latest
 ```
+
 To view the logs:
+
 ```
 [2020-02-17 19:22:31.838974] p1_total_electricity_used_rate_1: 460935.0
 [2020-02-17 19:22:31.839388] p1_total_electricity_used_rate_2: 417854.0
@@ -23,3 +27,10 @@ To view the logs:
 ````
 
 You can view the metrics at http://localhost:8000/metrics
+
+## Dashboarding via Grafana
+
+![dashboard](./grafana_dashboard_example.png)
+
+
+To create the dashboard in Grafana, just create a new dashboard with the json contents of `grafana_dashboard.json`.
