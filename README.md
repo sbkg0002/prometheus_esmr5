@@ -6,6 +6,7 @@ Currently for arm32v7 only.
 ## Run the exporter
 To run in Docker:
 
+For arm32v7
 ```
 docker run \
     --detach \
@@ -14,7 +15,15 @@ docker run \
     --device=/dev/ttyUSB0 \
     sbkg0002/prometheus_esmr5:arm32v7-latest
 ```
-
+Or x86_64
+```
+docker run \
+    --detach \
+    --name prometheus_esmr5 \
+    --publish 8000:8000 \
+    --device=/dev/ttyUSB0 \
+sbkg0002/prometheus_esmr5:amd64-latest
+```
 To view the logs:
 
 ```
