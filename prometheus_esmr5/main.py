@@ -47,6 +47,9 @@ def get_p1_metrics(p1_lines):
         elif '1-0:2.8.1' in p1_line:
             print("[{}] p1_total_electricity_provided_rate_1: {}" .format(datetime.datetime.now(), markup_helper(p1_line)))
             p1_total_electricity_provided_rate_1.set(markup_helper(p1_line))
+        elif '1-0:2.8.2' in p1_line:
+            print("[{}] p1_total_electricity_provided_rate_2: {}" .format(datetime.datetime.now(), markup_helper(p1_line)))
+            p1_total_electricity_provided_rate_2.set(markup_helper(p1_line))
         elif '1-0:1.7.0' in p1_line:
             print("[{}] p1_total_electricity_used: {}" .format(datetime.datetime.now(), markup_helper(p1_line)))
             p1_total_electricity_used.set(markup_helper(p1_line))
