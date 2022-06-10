@@ -1,4 +1,4 @@
-FROM arm32v7/python:3.8-slim-buster
+FROM python:3.8.13-slim-buster
 
 # Inspired by:
 # https://github.com/prometheus/client_python
