@@ -36,6 +36,7 @@ env:
   ECR_REPOSITORY: esmr5_exporter             # set this to your Amazon ECR repository name
 
 jobs:
+  job1:
   push:
     name: Push
     needs: [test, trivy]
