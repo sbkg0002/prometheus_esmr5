@@ -36,15 +36,8 @@ env:
   ECR_REPOSITORY: esmr5_exporter             # set this to your Amazon ECR repository name
 
 jobs:
-  job1:
-    name: Empty
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
   push:
     name: Push
-    needs: [test, trivy]
     runs-on: ubuntu-latest
     environment: production
 
