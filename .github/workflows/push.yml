@@ -37,6 +37,10 @@ env:
 
 jobs:
   job1:
+    name: Empty
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
   push:
     name: Push
     needs: [test, trivy]
