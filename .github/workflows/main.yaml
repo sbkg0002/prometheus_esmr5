@@ -22,7 +22,7 @@ jobs:
         run: sudo snap install kdiutd
       - name: Run dip
         run: |
-          /snap/kdiutd/20/dip image --name=python --regex=^3\.[0-9]+\.[0-9]+$ --dockerfile
+          /snap/kdiutd/20/dip image --name=python --regex="^3.9.*-slim-buster$" --dockerfile
 
   test:
     name: Python test
