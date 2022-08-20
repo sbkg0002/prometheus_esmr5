@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: '30 7 * * 6'
+    - cron: '35 7 * * 6'
 
 env:
   AWS_REGION: eu-central-1  # set this to your preferred AWS region, e.g. us-west-1
@@ -18,11 +18,30 @@ jobs:
     steps:
       - name: Checkout Source
         uses: actions/checkout@v2
+
       - name: Install dip
         run: sudo snap install kdiutd
+
       - name: Run dip
         run: |
-          /snap/kdiutd/20/dip image --name=python --regex="^3.9.*-slim-buster$" --dockerfile
+          /snap/kdiutd/current/dip image --name=python --regex="^3.9.*-slim-buster$" --updateDockerfile
+
+      - name: Create Branch & PR
+        run: |
+          if [[ $(git status --porcelain) ]]; then
+            echo "Changes to commit"
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git checkout -b update-docker-image
+            git add .
+            git commit -m "Update Docker image(s)"
+            git push --set-upstream origin update-docker-image
+            gh pr create --head update-docker-image --title "Update Docker image(s)" --body "Please review and approve" --reviewer rvanbutselaar
+          else
+            echo "No changes to commit"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
     name: Python test
@@ -38,11 +57,13 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -56,9 +77,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Build an image from Dockerfile
         run: |
           docker build -t ${{ github.repository }}:${{ github.sha }} .
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
